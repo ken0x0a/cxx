@@ -3,6 +3,15 @@ use std::path::Path;
 use std::process::Command;
 
 fn main() {
+    #[cfg(feature = "force-link-c++std")]
+    cc::Build::new()
+        .file("src/cxx.cc")
+        .cpp(true)
+        .cpp_link_stdlib(None) // linked via link-cplusplus crate
+        .flag(cxxbridge_flags::STD)
+        .warnings_into_errors(cfg!(deny_warnings))
+        .compile("cxxbridge1");
+    #[cfg(not(feature = "force-link-c++std"))]
     cc::Build::new()
         .file("src/cxx.cc")
         .cpp(true)
